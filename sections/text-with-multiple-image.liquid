@@ -1,0 +1,257 @@
+{{ 'text-with-multiple-image.css' | asset_url | stylesheet_tag }}
+{%- style -%}
+  #shopify-section-{{ section.id }}{
+    @media(min-width: 1025px) {
+      background: linear-gradient(90deg, #fff8f6 50%, #ffffff 50%) !important;
+    }
+
+  }
+  .grid.grid--no-gutters {
+    background-color: {{ section.settings.section_background_color }}
+    ;
+  }
+{%- endstyle -%}
+{%- for block in section.blocks -%}
+  {%- case block.type -%}
+
+    {%- when 'text_with_multiple_image' -%}
+    {{ block.settings.header }}
+    {{ block.settings.content }}
+    {% assign image_1 = block.settings.image_1 %}
+    {% assign image_2 = block.settings.image_2 %}
+    {% assign image_3 = block.settings.image_3 %}
+    <div class="text-with-multiple-image page-width section-{{ section.id }}-padding">
+      <div class="left-content">
+        <div class="left-item">
+          {%- for block in section.blocks -%}
+            {% case block.type %}
+              {%- when 'heading' -%}
+              <h2 class="image-with-text__heading inline-richtext {{ block.settings.heading_size }}" {{ block.shopify_attributes }}>
+                {{ block.settings.heading }}
+              </h2>
+              {%- when 'caption' -%}
+              <p class="image-with-text__text image-with-text__text--caption {{ block.settings.text_style }} {{ block.settings.text_style }}--{{ block.settings.text_size }} {{ block.settings.text_style }}" {{ block.shopify_attributes }}>
+                {{ block.settings.caption | escape }}
+              </p>
+              {%- when 'text' -%}
+              <div class="image-with-text__text rte {{ block.settings.text_style }}" {{ block.shopify_attributes }}>
+                {{ block.settings.text }}
+              </div>
+              {%- when 'buttons' -%}
+              <div class="banner__buttons{% if block.settings.button_label_1 != blank and block.settings.button_label_2 != blank %} banner__buttons--multiple{% endif %}" {{ block.shopify_attributes }}>
+                {%- if block.settings.button_label_1 != blank -%}
+                  <a {% if block.settings.button_link_1 == blank %}role="link"aria-disabled="true"{% else %}href="{{ block.settings.button_link_1 }}"{% endif %}class="button{% if block.settings.button_style_secondary_1 %} button--secondary{% else %} button--primary{% endif %}">
+                    {{- block.settings.button_label_1 | escape -}}
+                  </a>
+                {%- endif -%}
+                {%- if block.settings.button_label_2 != blank -%}
+                  <a {% if block.settings.button_link_2 == blank %}role="link"aria-disabled="true"{% else %}href="{{ block.settings.button_link_2 }}"{% endif %}class="button{% if block.settings.button_style_secondary_2 %} button--secondary{% else %} button--primary{% endif %}">
+                    {{- block.settings.button_label_2 | escape -}}
+                  </a>
+                {%- endif -%}
+              </div>
+            {%- endcase -%}
+          {%- endfor -%}
+        </div>
+      </div>
+      <div class="right-content">
+        <div class="right-item-1">
+          <div class="image-container">
+            <img src="{{ image_1 | image_url | default: 'https://via.placeholder.com/500x500.png?text=Placeholder+Image' }}">
+          </div>
+        </div>
+        <div class="right-item-2">
+          <div class="top-image-image-container">
+            <img src="{{ image_2 | image_url | default: 'https://via.placeholder.com/500x500.png?text=Placeholder+Image'}}">
+          </div>
+          <div class="bot-image-image-container">
+            <img src="{{ image_3 | image_url | default: 'https://via.placeholder.com/500x500.png?text=Placeholder+Image' }}">
+          </div>
+        </div>
+      </div>
+    </div>
+  {%- endcase -%}
+{%- endfor -%}
+
+
+
+{% schema %}
+  {
+    "name": "Code In Shopify Section",
+    "settings": [
+      {
+        "type": "color",
+        "id": "section_background_color",
+        "label": "Section Background Color"
+      }
+    ],
+    "blocks": [
+      {
+        "name": "Text with Multiple Image",
+        "type": "text_with_multiple_image",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Image 1"
+          }, {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image 2"
+          }, {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Image 3"
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "name": "t:sections.image-with-text.blocks.heading.name",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "inline_richtext",
+            "id": "heading",
+            "default": "Image with text",
+            "label": "t:sections.image-with-text.blocks.heading.settings.heading.label"
+          }, {
+            "type": "select",
+            "id": "heading_size",
+            "options": [
+              {
+                "value": "h2",
+                "label": "t:sections.all.heading_size.options__1.label"
+              }, {
+                "value": "h1",
+                "label": "t:sections.all.heading_size.options__2.label"
+              }, {
+                "value": "h0",
+                "label": "t:sections.all.heading_size.options__3.label"
+              }
+            ],
+            "default": "h1",
+            "label": "t:sections.all.heading_size.label"
+          }
+        ]
+      },
+      {
+        "type": "caption",
+        "name": "t:sections.image-with-text.blocks.caption.name",
+        "limit": 15,
+        "settings": [
+          {
+            "type": "text",
+            "id": "caption",
+            "default": "Add a tagline",
+            "label": "t:sections.image-with-text.blocks.caption.settings.text.label"
+          }, {
+            "type": "select",
+            "id": "text_style",
+            "options": [
+              {
+                "value": "subtitle",
+                "label": "t:sections.image-with-text.blocks.caption.settings.text_style.options__1.label"
+              }, {
+                "value": "caption-with-letter-spacing",
+                "label": "t:sections.image-with-text.blocks.caption.settings.text_style.options__2.label"
+              }
+            ],
+            "default": "caption-with-letter-spacing",
+            "label": "t:sections.image-with-text.blocks.caption.settings.text_style.label"
+          }, {
+            "type": "select",
+            "id": "text_size",
+            "options": [
+              {
+                "value": "small",
+                "label": "t:sections.image-with-text.blocks.caption.settings.caption_size.options__1.label"
+              }, {
+                "value": "medium",
+                "label": "t:sections.image-with-text.blocks.caption.settings.caption_size.options__2.label"
+              }, {
+                "value": "large",
+                "label": "t:sections.image-with-text.blocks.caption.settings.caption_size.options__3.label"
+              }
+            ],
+            "default": "medium",
+            "label": "t:sections.image-with-text.blocks.caption.settings.caption_size.label"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "name": "t:sections.image-with-text.blocks.text.name",
+        "limit": 5,
+        "settings": [
+          {
+            "type": "richtext",
+            "id": "text",
+            "default": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
+            "label": "t:sections.image-with-text.blocks.text.settings.text.label"
+          }, {
+            "type": "select",
+            "id": "text_style",
+            "options": [
+              {
+                "value": "body",
+                "label": "t:sections.image-with-text.blocks.text.settings.text_style.options__1.label"
+              }, {
+                "value": "subtitle",
+                "label": "t:sections.image-with-text.blocks.text.settings.text_style.options__2.label"
+              }
+            ],
+            "default": "body",
+            "label": "t:sections.image-with-text.blocks.text.settings.text_style.label"
+          }
+        ]
+      }, {
+        "type": "buttons",
+        "name": "t:sections.image-banner.blocks.buttons.name",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "text",
+            "id": "button_label_1",
+            "default": "Button label",
+            "label": "t:sections.image-banner.blocks.buttons.settings.button_label_1.label",
+            "info": "t:sections.image-banner.blocks.buttons.settings.button_label_1.info"
+          },
+          {
+            "type": "url",
+            "id": "button_link_1",
+            "label": "t:sections.image-banner.blocks.buttons.settings.button_link_1.label"
+          },
+          {
+            "type": "checkbox",
+            "id": "button_style_secondary_1",
+            "default": false,
+            "label": "t:sections.image-banner.blocks.buttons.settings.button_style_secondary_1.label"
+          },
+          {
+            "type": "text",
+            "id": "button_label_2",
+            "default": "Button label",
+            "label": "t:sections.image-banner.blocks.buttons.settings.button_label_2.label",
+            "info": "t:sections.image-banner.blocks.buttons.settings.button_label_2.info"
+          }, {
+            "type": "url",
+            "id": "button_link_2",
+            "label": "t:sections.image-banner.blocks.buttons.settings.button_link_2.label"
+          }, {
+            "type": "checkbox",
+            "id": "button_style_secondary_2",
+            "default": false,
+            "label": "t:sections.image-banner.blocks.buttons.settings.button_style_secondary_2.label"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Text With Multiple Image"
+      }
+    ]
+  }
+{% endschema %}
